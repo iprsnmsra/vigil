@@ -12,6 +12,17 @@
 
 ---
 
+## 🏰 The Story of Vigil (In 4 Lines)
+
+> *How to explain this project to developers, recruiters, and engineering leaders in 30 seconds:*
+
+1. **The Village Crisis**: Sneaky raiders (*bad releases*) regularly burn down the village at midnight, while phantom false alarms (*flaky tests*) waste all the villagers' time and ruin their trust.
+2. **The Guard at the Gate (Canary Rollback)**: **Vigil** only lets new visitors into 10% of the village first—the instant they cause trouble, the Guard banishes them in **1.4 seconds** before the rest of the village even notices.
+3. **The Watchtower & Wise Owl (Self-Healing & Gemini AI)**: When a fire breaks out, Vigil automatically pumps water and reinforces walls in **milliseconds**, while a wise owl (*Gemini AI*) inspects the ashes and leaves an exact report on how to prevent the next spark.
+4. **The Ghost Hunter (LightGBM ML)**: An intelligent tracker studies every alarm to separate real dangers from harmless noisy ghosts, locking the false alarms in quarantine so the villagers can finally sleep in peace.
+
+---
+
 ## 📌 Executive Summary
 
 **Bad deployments cause outages.** A single misconfigured release or slow latency degradation can bring down production, and most engineering teams discover it only after user tickets pile up. **Flaky tests waste thousands of hours** with intermittent false alarms, destroying developer velocity and eroding confidence in CI pipelines.
