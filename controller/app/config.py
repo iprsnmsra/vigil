@@ -1,10 +1,13 @@
 from typing import Optional, List
-from pydantic_settings import BaseSettings
-from pydantic import ConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = ConfigDict(env_prefix="VIGIL_")
+    model_config = SettingsConfigDict(
+        env_prefix="VIGIL_",
+        env_file=(".env", "../.env", "../../.env"),
+        extra="ignore",
+    )
 
     SERVICE_NAME: str = "vigil-controller"
     VERSION: str = "0.1.0"
@@ -15,7 +18,7 @@ class Settings(BaseSettings):
     GITHUB_TOKEN: Optional[str] = None
     LLM_ENABLED: bool = True
     GEMINI_API_KEY: Optional[str] = None
-    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_MODEL: str = "gemini-flash-lite-latest"
     RULES_PATH: str = "rules.yaml"
 
 

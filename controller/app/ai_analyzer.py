@@ -37,9 +37,15 @@ def redact_secrets(text: str) -> str:
 class GeminiIncidentAnalyzer:
     """Uses Google Gemini API to analyze deployment failures and generate postmortems."""
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "gemini-2.5-flash"):
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model = model
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        from .config import settings
+        self.api_key = (
+            api_key
+            or os.getenv("GEMINI_API_KEY")
+            or os.getenv("VIGIL_GEMINI_API_KEY")
+            or settings.GEMINI_API_KEY
+        )
+        self.model = model or getattr(settings, "GEMINI_MODEL", "gemini-flash-lite-latest")
         self.endpoint = (
             f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
         )
@@ -107,7 +113,7 @@ Always include this footer tag at the end:
 """
 
         try:
-            with httpx.Client(timeout=15.0) as client:
+            with httpx.Client(timeout=35.0) as client:
                 response = client.post(
                     f"{self.endpoint}?key={self.api_key}",
                     json={
