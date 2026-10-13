@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     ALLOWED_NAMESPACES: List[str] = ["default"]
     GITHUB_TOKEN: Optional[str] = None
     LLM_ENABLED: bool = False
-    RULES_PATH: str = "/app/rules.yaml"
+    RULES_PATH: str = "rules.yaml"
 
 
 settings = Settings()

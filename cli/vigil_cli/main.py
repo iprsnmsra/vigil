@@ -18,10 +18,19 @@ def install():
     # Placeholder for actual install logic
 
 @app.command()
-def demo():
-    """Run the local demo."""
-    console.print("[green]Starting local Vigil demo...[/green]")
-    # Placeholder for demo logic
+def demo(
+    bad_release: bool = typer.Option(False, "--bad-release", help="Simulate a failing canary release to demonstrate auto-rollback"),
+):
+    """Run the local demo of Vigil's self-healing platform."""
+    import subprocess
+    import sys
+    import os
+    
+    script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "examples", "live_demo.py"))
+    cmd = [sys.executable, script_path]
+    if bad_release:
+        cmd.append("--bad-release")
+    subprocess.run(cmd)
 
 @app.command()
 def status():
