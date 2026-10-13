@@ -44,9 +44,9 @@ def doctor():
     all_passed = True
     for name, passed in checks:
         if passed:
-            console.print(f"[green]✓[/green] {name} is installed")
+            console.print(f"[green][OK][/green] {name} is installed")
         else:
-            console.print(f"[red]✗[/red] {name} is missing")
+            console.print(f"[red][MISSING][/red] {name} is missing")
             all_passed = False
             
     if all_passed:
