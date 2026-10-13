@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vigil.fullname" . }}-detector
+  labels:
+    app: vigil-detector
+spec:
+  replicas: {{ .Values.detector.replicaCount }}
+  selector:
+    matchLabels:
+      app: vigil-detector
+  template:
+    metadata:
+      labels:
+        app: vigil-detector
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - name: detector
+          image: "{{ .Values.detector.image.repository }}:{{ .Values.detector.image.tag }}"
+          imagePullPolicy: {{ .Values.detector.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP

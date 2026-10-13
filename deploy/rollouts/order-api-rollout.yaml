@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: order-api
+spec:
+  replicas: 3
+  strategy:
+    canary:
+      steps:
+      - setWeight: 10
+      - pause: {duration: 60s}
+      - analysis:
+          templates:
+          - templateName: success-rate-and-latency
+      - setWeight: 30
+      - pause: {duration: 60s}
+      - analysis:
+          templates:
+          - templateName: success-rate-and-latency
+      - setWeight: 100
+  selector:
+    matchLabels:
+      app: order-api
+  template:
+    metadata:
+      labels:
+        app: order-api
+    spec:
+      containers:
+      - name: order-api
+        image: vigil/order-api:latest
+        ports:
+        - containerPort: 8080

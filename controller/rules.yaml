@@ -1,0 +1,27 @@
+- name: CrashLoopBackOff
+  alert_match:
+    alertname: KubePodCrashLooping
+    namespace: default
+  conditions: []
+  actions:
+    - type: restart
+    - type: rollback
+  cooldown: 15m
+
+- name: HighMemory
+  alert_match:
+    alertname: HighMemoryUsage
+    namespace: default
+  conditions: []
+  actions:
+    - type: scale
+      replicas: 3
+  cooldown: 30m
+
+- name: FailedRollout
+  alert_match:
+    alertname: DeploymentReplicasMismatch
+  conditions: []
+  actions:
+    - type: github_issue
+  cooldown: 1h

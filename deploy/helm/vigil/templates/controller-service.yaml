@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vigil.fullname" . }}-controller
+  labels:
+    app: vigil-controller
+spec:
+  type: {{ .Values.controller.service.type }}
+  ports:
+    - port: {{ .Values.controller.service.port }}
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: vigil-controller

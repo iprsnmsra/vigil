@@ -1,0 +1,23 @@
+controller:
+  replicaCount: 1
+  image:
+    repository: vigil/controller
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+
+detector:
+  replicaCount: 1
+  image:
+    repository: vigil/flaky-detector
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+
+serviceAccount:
+  create: true
+  name: "vigil-sa"

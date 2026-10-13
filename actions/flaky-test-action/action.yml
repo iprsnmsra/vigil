@@ -1,0 +1,35 @@
+name: 'Vigil Flaky Test Detector'
+description: 'Upload test results to Vigil to detect flaky tests.'
+inputs:
+  results:
+    description: 'Path to JUnit XML test results.'
+    required: true
+  api-url:
+    description: 'Vigil API URL'
+    required: true
+  quarantine:
+    description: 'Whether to quarantine flaky tests.'
+    required: false
+    default: 'false'
+  threshold:
+    description: 'Threshold for flaky test detection.'
+    required: false
+    default: '0.5'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: pip install requests
+      shell: bash
+    - name: Run upload script
+      run: python ${{ github.action_path }}/upload.py
+      shell: bash
+      env:
+        RESULTS_PATH: ${{ inputs.results }}
+        API_URL: ${{ inputs.api-url }}
+        QUARANTINE: ${{ inputs.quarantine }}
+        THRESHOLD: ${{ inputs.threshold }}

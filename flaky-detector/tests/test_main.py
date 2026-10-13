@@ -1,0 +1,9 @@
+def test_health(client):
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+def test_list_tests(client):
+    response = client.get("/api/tests")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
