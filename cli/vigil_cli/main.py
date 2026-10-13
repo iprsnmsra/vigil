@@ -12,10 +12,44 @@ def init():
     # Placeholder for actual init logic
 
 @app.command()
-def install():
-    """Install Vigil on a cluster."""
-    console.print("[green]Installing Vigil on the cluster...[/green]")
-    # Placeholder for actual install logic
+def install(
+    cluster_name: str = typer.Option("vigil-cluster", "--cluster-name", help="Name of the kind cluster to create/target"),
+):
+    """Install Vigil on a Kubernetes cluster (ArgoCD, Argo Rollouts, Prometheus, Helm)."""
+    import shutil
+    import subprocess
+    import sys
+    import os
+
+    console.print(f"[bold cyan]>>> Starting Vigil Kubernetes Cluster Installer (Cluster: {cluster_name})...[/bold cyan]")
+    
+    missing = []
+    if not shutil.which("docker"):
+        missing.append("Docker (Ensure Docker Desktop is installed and running)")
+    if not shutil.which("kind"):
+        missing.append("kind (Install: winget install Kubernetes.kind)")
+    if not shutil.which("kubectl"):
+        missing.append("kubectl (Install: winget install Kubernetes.kubectl)")
+    if not shutil.which("helm"):
+        missing.append("helm (Install: winget install Helm.Helm)")
+
+    if missing:
+        console.print("\n[bold red][MISSING PREREQUISITES][/bold red]")
+        for m in missing:
+            console.print(f"  [red]-[/red] {m}")
+        console.print("\n[yellow]To install quickly on Windows PowerShell:[/yellow]")
+        console.print("  [bold white]winget install Kubernetes.kind Kubernetes.kubectl Helm.Helm[/bold white]")
+        console.print("  [dim]After installing, launch Docker Desktop and run 'vigil install' again.[/dim]")
+        console.print(f"[cyan]Automated setup script is ready at:[/cyan] deploy/setup_kind_cluster.ps1\n")
+        raise typer.Exit(code=1)
+
+    script = "setup_kind_cluster.ps1" if sys.platform == "win32" else "setup_kind_cluster.sh"
+    script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "deploy", script))
+    
+    cmd = ["powershell", "-ExecutionPolicy", "Bypass", "-File", script_path] if sys.platform == "win32" else ["bash", script_path]
+    res = subprocess.run(cmd)
+    if res.returncode != 0:
+        raise typer.Exit(code=res.returncode)
 
 @app.command()
 def demo(

@@ -1,6 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
-from typing import Dict, Any
+from typing import Dict, Any, List
 from fastapi import FastAPI
 
 from .config import settings
@@ -15,6 +15,8 @@ from .actions import (
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+recent_incidents: List[Dict[str, Any]] = []
 
 
 @asynccontextmanager
@@ -59,13 +61,21 @@ async def handle_alert(payload: Dict[str, Any]):
                 elif act_type == "scale":
                     action_obj = ScaleAction(target=target, replicas=act.get("replicas", 3))
                 elif act_type == "github_issue":
-                    action_obj = GitHubIssueAction(target=target)
+                    action_obj = GitHubIssueAction(target=target, alert_data=alert)
 
                 if action_obj:
                     if settings.DRY_RUN:
                         action_obj.dry_run()
                     else:
                         action_obj.execute()
+
+                    if isinstance(action_obj, GitHubIssueAction) and action_obj.analysis_result:
+                        recent_incidents.append({
+                            "target": target,
+                            "rule": match.name,
+                            "analysis": action_obj.analysis_result,
+                        })
+
                     executed_actions.append({"rule": match.name, "action": act_type, "target": target})
 
     return {
@@ -91,3 +101,9 @@ async def get_rules():
 async def get_actions():
     """Returns audit log of actions taken."""
     return {"actions": audit_log.get_recent_actions()}
+
+
+@app.get("/api/incidents")
+async def get_incidents():
+    """Returns recent incident root-cause analyses."""
+    return {"incidents": recent_incidents[-10:]}
